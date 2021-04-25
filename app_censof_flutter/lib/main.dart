@@ -2,7 +2,12 @@
 
 //import 'package:appphp/login.dart';
 //
+import 'package:app_censof/view/addProduct.dart';
+import 'package:app_censof/view/addUser.dart';
+import 'package:app_censof/view/listProducts.dart';
 import 'package:app_censof/view/login.dart';
+import 'package:app_censof/view/projects/addProject.dart';
+import 'package:app_censof/view/projects/listProjects.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 //import 'package:http/http.dart' as http;
@@ -52,7 +57,11 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("App censo flutter", style: TextStyle(color: Colors.white)),
+        title: Text(
+          "APP CENSOF",
+          style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -67,7 +76,31 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: Center(child: Text("Main Page")),
+      body: Center(
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () {},
+                color: Colors.lightBlue,
+                child: Text('Crear Nuevo Proyecto',
+                    style: TextStyle(color: Colors.white)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0)),
+              ),
+              //
+              //boton de actualizar contenido
+              FloatingActionButton(
+                onPressed: () {},
+                child: Icon(Icons.update),
+              ),
+            ],
+          ),
+        ),
+      ),
       drawer: Drawer(
         child: new ListView(
           children: <Widget>[
@@ -85,23 +118,44 @@ class _MainPageState extends State<MainPage> {
               // )
               // ),
             ),
-
+            new ListTile(
+              title: new Text("List Products"),
+              trailing: new Icon(Icons.help),
+              onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => ListProducts(),
+              )),
+            ),
+            new ListTile(
+              title: new Text("Add Products"),
+              trailing: new Icon(Icons.help),
+              onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => AddDataProduct(),
+              )),
+            ),
             new Divider(),
-            // new ListTile(
-            // title: new Text("Add data"),
-            // trailing: new Icon(Icons.fitness_center),
-            // onTap: () => Navigator.of(context).push(new MaterialPageRoute(
-            // builder: (BuildContext context) => AddData(),
-            // )),
-            // ),
-            // new Divider(),
-            // new ListTile(
-            // title: new Text("Mostrar listado"),
-            // trailing: new Icon(Icons.help),
-            // onTap: () => Navigator.of(context).push(new MaterialPageRoute(
-            // builder: (BuildContext context) => ShowData(),
-            // )),
-            // ),
+            new ListTile(
+              title: new Text("Register user"),
+              trailing: new Icon(Icons.fitness_center),
+              onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => AddUser(),
+              )),
+            ),
+            //PARTE PROYECTO
+            new ListTile(
+              title: new Text("Add Project"),
+              trailing: new Icon(Icons.help),
+              onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => AddDataProject(),
+              )),
+            ),
+            //LISTAR PROYECTOS
+            new ListTile(
+              title: new Text("List Project"),
+              trailing: new Icon(Icons.help),
+              onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => ListProjects(),
+              )),
+            ),
           ],
         ),
       ),
