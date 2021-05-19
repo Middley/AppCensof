@@ -45,11 +45,8 @@ class _LoginPageState extends State<LoginPage> {
   //funcion para que se conecte, y verifique y traiga el token
   signIn(String name, pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
     Map data = {'name': name, 'password': pass};
-
-    var jsonResponse;
-    jsonResponse = null;
+    var jsonResponse = null;
 
     //Se hace una peticion al servidor
     var response = await http
@@ -122,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
               hintStyle: TextStyle(color: Colors.white70),
             ),
           ),
+          //
           SizedBox(height: 30.0),
           TextFormField(
             controller: passwordController,

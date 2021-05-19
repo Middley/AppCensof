@@ -1,5 +1,6 @@
 import 'package:app_censof/controllers/databasehelpers.dart';
 import 'package:app_censof/main.dart';
+import 'package:app_censof/view/trees/listTrees.dart';
 import 'package:flutter/material.dart';
 
 class AddDataProject extends StatefulWidget {
@@ -24,136 +25,122 @@ class _AddDataProjectState extends State<AddDataProject> {
   final TextEditingController _provinciaController =
       new TextEditingController();
   final TextEditingController _distritoController = new TextEditingController();
+  final TextEditingController _useridController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Add Project',
+      debugShowCheckedModeBanner: false,
+      title: 'Nuevo Proyecto',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Add Project'),
+          title: Text('Nuevo Proyecto'),
         ),
         body: Container(
-          child: ListView(
-            padding: const EdgeInsets.only(
-                top: 62, left: 12.0, right: 12.0, bottom: 12.0),
-            children: <Widget>[
-              //contenedor nombre proyecto
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _nameController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'nombre',
-                    hintText: 'nombre Proyecto',
-                    icon: new Icon(Icons.email),
-                  ),
+          padding: EdgeInsets.only(left: 16, top: 25, right: 16),
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: ListView(
+              children: [
+                //separacion
+                SizedBox(
+                  height: 20,
                 ),
-              ),
-              //contedor fecha inicio proyecto
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _fechaController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'fecha',
-                    hintText: 'fecha proyecto', //marcador de agua
-                    icon: new Icon(Icons.vpn_key),
-                  ),
-                ),
-              ),
 
-              //contenedor para campo region
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _regionController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'region',
-                    hintText: 'region', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
-                ),
-              ),
+                buildTextField(_nameController, TextInputType.text,
+                    "Nombre del proyecto", Icon(Icons.description)),
+                buildTextField(_fechaController, TextInputType.text, "Fecha",
+                    Icon(Icons.description)),
+                buildTextField(_regionController, TextInputType.text, "Region",
+                    Icon(Icons.location_city_outlined)),
+                buildTextField(_provinciaController, TextInputType.text,
+                    "Provincia", Icon(Icons.location_on_outlined)),
+                buildTextField(_distritoController, TextInputType.text,
+                    "Distrito", Icon(Icons.location_searching)),
+                buildTextField(_useridController, TextInputType.number,
+                    "Id Usuario", Icon(Icons.perm_identity)),
 
-              //para el campo de coordenada este
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _provinciaController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'provincia',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
+                SizedBox(
+                  height: 35,
                 ),
-              ),
 
-              //para el campo de coordenada norte
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _distritoController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Distrito ',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
+                Row(
+                  children: [
+                    //BOTON CANCELAR
+                    OutlineButton(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      onPressed: () {
+                        Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) => MainPage(),
+                        ));
+                      },
+                      child: Text(
+                        "cancelar",
+                        style: TextStyle(
+                            fontSize: 14,
+                            letterSpacing: 2.2,
+                            color: Colors.black),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 35,
+                    ),
+                    //BOTON AGREGAR
+                    RaisedButton(
+                        onPressed: () {
+                          databaseHelper.addDataProject(
+                              _nameController.text.trim(),
+                              _fechaController.text.trim(),
+                              _regionController.text.trim(),
+                              _provinciaController.text.trim(),
+                              _distritoController.text.trim(),
+                              int.parse(_useridController.text.trim()));
+
+                          Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (BuildContext context) => new ListTrees(),
+                          ));
+                        },
+                        color: Colors.lightBlue,
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        elevation: 2,
+                        child: Text(
+                          "Agregar",
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 2.2,
+                              color: Colors.black),
+                        )),
+                  ],
                 ),
-              ),
-
-              new Padding(
-                padding: new EdgeInsets.only(top: 44.0),
-              ),
-              /*
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _alturaController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'ALtura',
-                    hintText: '',
-                    icon: new Icon(Icons.vpn_key),
-                  ),
-                ),
-              ),
-              new Padding(
-                padding: new EdgeInsets.only(top: 44.0),
-              ),
-
-              */
-
-              Container(
-                height: 50,
-                child: new RaisedButton(
-                  onPressed: () {
-                    databaseHelper.addDataProject(
-                        _nameController.text.trim(),
-                        _fechaController.text.trim(),
-                        _regionController.text.trim(),
-                        _provinciaController.text.trim(),
-                        _distritoController.text.trim());
-                    Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (BuildContext context) => new MainPage(),
-                    ));
-                  },
-                  color: Colors.blue,
-                  child: new Text(
-                    'Add',
-                    style: new TextStyle(
-                        color: Colors.white, backgroundColor: Colors.blue),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  TextField buildTextField(
+      TextEditingController ct, TextInputType tipo, String texto, Icon icono) {
+    return TextField(
+      controller: ct,
+      keyboardType: tipo,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 3),
+        labelText: texto,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        hintText: '',
+        hintStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        icon: icono,
       ),
     );
   }

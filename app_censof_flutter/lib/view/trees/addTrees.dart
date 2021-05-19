@@ -1,6 +1,8 @@
 import 'package:app_censof/controllers/databasehelpers.dart';
-import 'package:app_censof/main.dart';
+//import 'package:app_censof/main.dart';
+import 'package:app_censof/view/trees/listTrees.dart';
 import 'package:flutter/material.dart';
+//import 'package:intl/intl.dart';
 
 class AddDataTrees extends StatefulWidget {
   AddDataTrees({Key key, this.title}) : super(key: key);
@@ -13,11 +15,8 @@ class AddDataTrees extends StatefulWidget {
 class _AddDataTreesState extends State<AddDataTrees> {
   DataBaseHelper databaseHelper = new DataBaseHelper();
 
-  //instanciamos
-  //final TextEditingController _nameController = new TextEditingController();
-  //final TextEditingController _priceController = new TextEditingController();
-  //final TextEditingController _stockController = new TextEditingController();
-
+  final TextEditingController _projectIDController =
+      new TextEditingController();
   final TextEditingController _nombreComunController =
       new TextEditingController();
   final TextEditingController _nombreCientificoController =
@@ -39,171 +38,120 @@ class _AddDataTreesState extends State<AddDataTrees> {
           title: Text('Add Trees'),
         ),
         body: Container(
-          child: ListView(
-            padding: const EdgeInsets.only(
-                top: 62, left: 12.0, right: 12.0, bottom: 12.0),
-            children: <Widget>[
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _nombreComunController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'name',
-                    hintText: 'Product name',
-                    icon: new Icon(Icons.email),
-                  ),
+          padding: EdgeInsets.only(left: 16, top: 25, right: 16),
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: ListView(
+              children: [
+                //separacion
+                SizedBox(
+                  height: 35,
                 ),
-              ),
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _nombreCientificoController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Nombre científico',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.vpn_key),
-                  ),
-                ),
-              ),
 
-              //para el campo altura
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _alturaController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Altura',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
-                ),
-              ),
+                buildTextField(_projectIDController, TextInputType.number,
+                    "Id proyecto", Icon(Icons.confirmation_number)),
+                buildTextField(_nombreComunController, TextInputType.text,
+                    "Nombre Común", Icon(Icons.description)),
+                buildTextField(_nombreCientificoController, TextInputType.text,
+                    "Nombre Cientifico", Icon(Icons.location_city_outlined)),
+                buildTextField(_alturaController, TextInputType.number,
+                    "Altura", Icon(Icons.center_focus_weak_outlined)),
+                buildTextField(_coorEsteController, TextInputType.number,
+                    "Coordenada Este", Icon(Icons.location_searching)),
+                buildTextField(_coorNorteController, TextInputType.number,
+                    "Coordenada Norte", Icon(Icons.location_searching)),
+                buildTextField(_observacionesController, TextInputType.text,
+                    "Observaciones", Icon(Icons.text_fields)),
+                buildTextField(_fechaController, TextInputType.text, "Fecha",
+                    Icon(Icons.date_range)),
 
-              //para el campo de coordenada este
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _coorEsteController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'coordenada Este',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
+                SizedBox(
+                  height: 35,
                 ),
-              ),
 
-              //para el campo de coordenada norte
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _coorNorteController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Coordenanda ',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
+                Row(
+                  children: [
+                    //BOTON CANCELAR
+                    OutlineButton(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      onPressed: () {
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => ListTrees()),
+                            (Route<dynamic> route) => true);
+                      },
+                      child: Text(
+                        "cancelar",
+                        style: TextStyle(
+                            fontSize: 14,
+                            letterSpacing: 2.2,
+                            color: Colors.black),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 35,
+                    ),
+                    //BOTON AGREGAR
+                    RaisedButton(
+                        onPressed: () {
+                          databaseHelper.addDataArboles(
+                              int.parse(_projectIDController.text.trim()),
+                              _nombreComunController.text.trim(),
+                              _nombreCientificoController.text.trim(),
+                              int.parse(_alturaController.text.trim()),
+                              int.parse(_coorEsteController.text.trim()),
+                              int.parse(_coorNorteController.text.trim()),
+                              _observacionesController.text.trim(),
+                              _fechaController.text.trim());
+
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ListTrees()),
+                              (Route<dynamic> route) => true);
+                        },
+                        color: Colors.lightBlue,
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        elevation: 2,
+                        child: Text(
+                          "Guardar",
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 2.2,
+                              color: Colors.black),
+                        )),
+                  ],
                 ),
-              ),
-
-              //para el campo observaciones
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _coorNorteController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Coordenanda Norte',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
-                ),
-              ),
-
-              //para cmapo observaciones
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _observacionesController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Observaciones',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
-                ),
-              ),
-
-              //para cmapo fecha
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _fechaController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Fecha',
-                    hintText: '', //marcador de agua
-                    icon: new Icon(Icons.add),
-                  ),
-                ),
-              ),
-
-              new Padding(
-                padding: new EdgeInsets.only(top: 44.0),
-              ),
-              /*
-              Container(
-                height: 50,
-                child: new TextField(
-                  controller: _alturaController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'ALtura',
-                    hintText: '',
-                    icon: new Icon(Icons.vpn_key),
-                  ),
-                ),
-              ),
-              new Padding(
-                padding: new EdgeInsets.only(top: 44.0),
-              ),
-
-              */
-
-              Container(
-                height: 50,
-                child: new RaisedButton(
-                  onPressed: () {
-                    databaseHelper.addDataArboles(
-                        _nombreComunController.text.trim(),
-                        _nombreCientificoController.text.trim(),
-                        _alturaController.text.trim(),
-                        _coorEsteController.text.trim(),
-                        _coorNorteController.text.trim(),
-                        _observacionesController.text.trim(),
-                        _fechaController.text.trim());
-                    Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (BuildContext context) => new MainPage(),
-                    ));
-                  },
-                  color: Colors.blue,
-                  child: new Text(
-                    'Add',
-                    style: new TextStyle(
-                        color: Colors.white, backgroundColor: Colors.blue),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-//class _nombreCientificoController {}
+  TextField buildTextField(
+      TextEditingController ct, TextInputType tipo, String texto, Icon icono) {
+    return TextField(
+      controller: ct,
+      keyboardType: tipo,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 3),
+        labelText: texto,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        hintText: '',
+        hintStyle: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        icon: icono,
+      ),
+    );
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:app_censof/controllers/databasehelpers.dart';
+import 'package:app_censof/main.dart';
 import 'package:app_censof/view/projects/editProject.dart';
 import 'package:app_censof/view/projects/listProjects.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _DetailProjectState extends State<DetailProject> {
             databaseHelper
                 .removeRegister(widget.list[widget.index]['id'].toString());
             Navigator.of(context).push(new MaterialPageRoute(
-              builder: (BuildContext context) => new ListProjects(),
+              builder: (BuildContext context) => new MainPage(),
             ));
           },
         ),

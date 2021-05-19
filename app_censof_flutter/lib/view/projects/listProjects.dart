@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:app_censof/main.dart';
 import 'package:app_censof/view/projects/detailProject.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -44,6 +45,10 @@ class _ListProjectsState extends State<ListProjects> {
                 );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.arrow_back),
+      ),
     );
   }
 }
@@ -71,7 +76,7 @@ class ItemList extends StatelessWidget {
               child: new ListTile(
                 title: new Text(
                   list[i]['name'].toString(),
-                  style: TextStyle(fontSize: 25.0, color: Colors.orangeAccent),
+                  style: TextStyle(fontSize: 25.0, color: Colors.black),
                 ),
               ),
             ),

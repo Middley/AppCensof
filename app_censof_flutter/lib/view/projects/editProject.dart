@@ -26,6 +26,7 @@ class _EditProjectState extends State<EditProject> {
   TextEditingController controllerProvincia;
   TextEditingController controllerDistrito;
   TextEditingController controllerIdProject;
+  TextEditingController controllerIdUser;
 
   @override
   void initState() {
@@ -47,6 +48,8 @@ class _EditProjectState extends State<EditProject> {
     controllerDistrito = new TextEditingController(
         text: widget.list[widget.index]['Distrito'].toString());
     //
+    controllerIdUser = new TextEditingController(
+        text: widget.list[widget.index]['ID Usuario'].toString());
     super.initState();
   }
 
@@ -154,13 +157,13 @@ class _EditProjectState extends State<EditProject> {
                   color: Colors.blueAccent,
                   onPressed: () {
                     databaseHelper.editarDataProject(
-                      controllerIdProject.text.trim(),
-                      controllerNombre.text.trim(),
-                      controllerFecha.text.trim(),
-                      controllerRegion.text.trim(),
-                      controllerProvincia.text.trim(),
-                      controllerDistrito.text.trim(),
-                    );
+                        controllerIdProject.text.trim(),
+                        controllerNombre.text.trim(),
+                        controllerFecha.text.trim(),
+                        controllerRegion.text.trim(),
+                        controllerProvincia.text.trim(),
+                        controllerDistrito.text.trim(),
+                        int.parse(controllerIdUser.text.trim()));
                     Navigator.of(context).push(new MaterialPageRoute(
                       builder: (BuildContext context) => new ListProjects(),
                     ));

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,12 +7,16 @@ class DataBaseHelper {
   //estos string son de la api
   String serverUrl = "http://192.168.1.34:8000/api";
   String serverUrlproducts = "http://192.168.1.34:8000/api/products";
-  String serverUrltrees = "http://192.168.1.34:8000/api/trees";
+  String serverUrltrees = "http://192.168.1.34:8000/api/projects/trees";
   String serverUrlprojects = "http://192.168.1.34:8000/api/projects";
 
   var status;
 
   var token;
+
+  int dimeidProyecto(TextEditingController id) {
+    return int.parse(id.text.trim());
+  }
 
   //create function for login
   //esta funcion nos devuelve un json si todo está correcto
@@ -19,7 +24,7 @@ class DataBaseHelper {
     String myUrl = "$serverUrl/login";
     final response = await http.post(Uri.parse(myUrl),
         headers: {'Accept': 'application/json'},
-        body: {"email": "$name", "password": "$password"});
+        body: {"name": "$name", "password": "$password"});
     status = response.body.contains('error');
 
     var data = json.decode(response.body);
@@ -87,21 +92,23 @@ class DataBaseHelper {
       String _fechaController,
       String _regionController,
       String _provinciaController,
-      String _distritoComunController) async {
+      String _distritoComunController,
+      int _userid) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
 
     // String myUrl = "$serverUrl/api";
-    String myUrl = "http://192.168.1.34:8000/api/projects/";
+    String myUrl = "http://192.168.1.34:8000/api/projects";
     final response = await http.post(Uri.parse(myUrl), headers: {
       'Accept': 'application/json'
     }, body: {
-      "nombre": "$_nameController",
-      "Fecha": "$_fechaController",
-      "Region": "$_regionController",
-      "Provincia": "$_provinciaController",
-      "Distrito": "$_regionController"
+      "name": "$_nameController",
+      "fecha": "$_fechaController",
+      "region": "$_regionController",
+      "provincia": "$_provinciaController",
+      "distrito": "$_regionController",
+      "user_id": "$_userid"
     });
     status = response.body.contains('error');
 
@@ -118,7 +125,7 @@ class DataBaseHelper {
   //===============================================================
   //actualizar o editar datos del proyecto
   void editarDataProject(String id, String name, String fecha, String region,
-      String provincia, String distrito) async {
+      String provincia, String distrito, int iduser) async {
     //
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
@@ -129,11 +136,12 @@ class DataBaseHelper {
       'Accept': 'application/json',
       'Authorization': 'Bearer $value'
     }, body: {
-      "nombre": "$name",
+      "name": "$name",
       "fecha": "$fecha",
       "region": "$region",
       "provincia": "$provincia",
       "distrito": "$distrito",
+      "user_id": "$iduser"
     }).then((response) {
       print('Response status : ${response.statusCode}');
       print('Response body : ${response.body}');
@@ -177,31 +185,33 @@ class DataBaseHelper {
   //===============================================================
   //===============================================================
   //===============================================================
-  //function for register arboles
+  //function REGISTRAR ARBOLES
   void addDataArboles(
+      int _projectId,
       String _nombreComunController,
       String _nombreCientificoController,
-      String _alturaController,
-      String _coorEsteController,
-      String _coorNorteComunController,
+      int _alturaController,
+      int _coorEsteController,
+      int _coorNorteComunController,
       String _observacionesController,
       String _fechaController) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
 
-    // String myUrl = "$serverUrl/api";
+    //String myUrl = "$serverUrl/api";
     String myUrl = "http://192.168.1.34:8000/api/trees";
     final response = await http.post(Uri.parse(myUrl), headers: {
       'Accept': 'application/json'
     }, body: {
-      "nombre Comun": "$_nombreComunController",
-      "nombre Cientifico": "$_nombreCientificoController",
-      "Altura": "$_alturaController",
-      "Coordenada Este": "$_coorEsteController",
-      "Coordenada Norte": "$_coorNorteComunController",
-      "Observaciones": "$_observacionesController",
-      "Fecha": "$_fechaController"
+      "project_id": "$_projectId",
+      "nombre_comun": "$_nombreComunController",
+      "nombre_cientifico": "$_nombreCientificoController",
+      "altura": "$_alturaController",
+      "coor_este": "$_coorEsteController",
+      "coor_norte": "$_coorNorteComunController",
+      "observaciones": "$_observacionesController",
+      "fecha": "$_fechaController"
     });
     status = response.body.contains('error');
 
@@ -216,7 +226,8 @@ class DataBaseHelper {
   }
 
   //==================================================================
-  // ======== actualizar datos de los arboles ==============
+  // ============== actualizar datos de los arboles ==================
+  //==================================================================
 
   void editarDataTrees(
       String id,
@@ -237,13 +248,14 @@ class DataBaseHelper {
       'Accept': 'application/json',
       'Authorization': 'Bearer $value'
     }, body: {
-      "nombre Comun": "$nombreComun",
-      "nombre Cientifico": "$nombreCientifico",
-      "Altura": "$altura",
-      "Coordenada Este": "$coorEste",
-      "Coordenada Norte": "$coorNorte",
-      "Observaciones": "$observaciones",
-      "Fecha": "$fecha"
+      "project_id": "$id",
+      "nombre_comun": "$nombreComun",
+      "nombre_cientifico": "$nombreCientifico",
+      "altura": "$altura",
+      "coor_este": "$coorEste",
+      "coor_norte": "$coorNorte",
+      "observaciones": "$observaciones",
+      "fecha": "$fecha"
     }).then((response) {
       print('Response status : ${response.statusCode}');
       print('Response body : ${response.body}');
@@ -271,12 +283,13 @@ class DataBaseHelper {
 //=========================================================================
   ///===================== obtener los arboles ==============================
   //funciton getData (obtener datos)
-  Future<List> getDataTrees() async {
+  Future<List> getDataTrees(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
 
-    String myUrl = "$serverUrltrees";
+    String myUrl = "http://192.168.1.34:8000/api/trees/$id";
+    //String myUrl = "$serverUrltrees";
     http.Response response = await http.get(Uri.parse(myUrl), headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $value'
@@ -352,4 +365,7 @@ class DataBaseHelper {
     final value = prefs.get(key) ?? 0;
     print('read : $value');
   }
+
+  //funcion para sacar el id del usuario logeado
+
 }

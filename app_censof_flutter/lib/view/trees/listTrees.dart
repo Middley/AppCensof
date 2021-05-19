@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:app_censof/controllers/databasehelpers.dart';
+import 'package:app_censof/main.dart';
+import 'package:app_censof/view/projects/addProject.dart';
+import 'package:app_censof/view/trees/addTrees.dart';
 import 'package:app_censof/view/trees/detailTrees.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -25,24 +29,68 @@ class _ListTreesState extends State<ListTrees> {
     this.getData();
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("¿Quieres salir del proyecto?"),
+        actions: [
+          FlatButton(
+            child: Text("No"),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          FlatButton(
+            child: Text("Yes"),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => MainPage()),
+                  (Route<dynamic> route) => true);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  //databasehelper instancia
+  DataBaseHelper databaseHelper = new DataBaseHelper();
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Listviews Trees"),
-      ),
-      body: new FutureBuilder<List>(
-        future: getData(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
-          return snapshot.hasData
-              ? new ItemList(
-                  list: snapshot.data,
-                )
-              : new Center(
-                  child: new CircularProgressIndicator(),
-                );
-        },
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: new AppBar(
+          title: new Text("Árboles"),
+        ),
+        body: Container(
+          child: FutureBuilder(
+            future: getData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return new ItemList(list: snapshot.data);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return CircularProgressIndicator();
+            },
+          ),
+        ),
+
+        //boton nuevo registro arbol
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            setState(() {
+              Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => AddDataTrees(),
+              ));
+            });
+          },
+          label: const Text('Árbol'),
+          icon: const Icon(Icons.add),
+          backgroundColor: Colors.blue,
+        ),
       ),
     );
   }
@@ -50,6 +98,7 @@ class _ListTreesState extends State<ListTrees> {
 
 class ItemList extends StatelessWidget {
   final List list;
+  //constructor
   ItemList({this.list});
 
   @override
@@ -70,8 +119,8 @@ class ItemList extends StatelessWidget {
             child: new Card(
               child: new ListTile(
                 title: new Text(
-                  list[i]['name'].toString(),
-                  style: TextStyle(fontSize: 25.0, color: Colors.orangeAccent),
+                  list[i]['nombre_comun'].toString(),
+                  style: TextStyle(fontSize: 25.0, color: Colors.blue),
                 ),
               ),
             ),
